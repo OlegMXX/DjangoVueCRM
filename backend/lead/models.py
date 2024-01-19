@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
 class Lead(models.Model):
     NEW = 'new'
     CONTACTED = 'contacted'
@@ -31,7 +30,7 @@ class Lead(models.Model):
     contact_person = models.CharField(max_length=255)
     email = models.EmailField()
     phone = models.CharField(max_length=255)
-    website = models.URLField(blank=True, null=True)
+    website = models.CharField(max_length=255, blank=True, null=True)
     confidence = models.IntegerField(blank=True, null=True)
     estimated_value = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=25, choices=CHOICES_STATUS, default=NEW)

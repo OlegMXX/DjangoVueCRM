@@ -3,7 +3,7 @@
     <Navbar/>
 
     <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
-      <div class="lds-dual-ring"></div>
+      <div class="lds-dual-ring" v-bind:class="{'is-loading': $store.state.isLoading }"></div>
     </div>
 
     <section class="section">
@@ -42,18 +42,34 @@
 .lds-dual-ring {
   display: inline-block;
   width: 80px;
-  height: 80px;
+  height: 0px;
+
+  &.is-loading {
+    visibility: visible;
+    height: 0px;
+  }
 }
+
+
 
 .lds-dual-ring:after {
   content: " ";
+  visibility: hidden;
   display: block;
   width: 64px;
-  height: 64px;
+  height: 0px;
+  margin: 8px;
   border-radius: 50%;
   border: 6px solid #ccc;
   border-color: #ccc transparent #ccc transparent;
   animation: lds-dual-ring 1.2s linear infinite;
+
+  &.is-loading {
+    visibility: visible;
+    height: 0px;
+  }
+
+  
 }
 
 @keyframes lds-dual-ring {
@@ -66,7 +82,8 @@
 }
 
 .lds-loading-bar {
-  height: 0;
+  visibility: hidden;
+  height: 0px;
   overflow: hidden;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
