@@ -5,13 +5,13 @@ from .models import Lead
 class LeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead
-        read_only_fields = (
+        read_only_fields = (# fields that generates at backend
             'created_by',
             'created_at',
             'modified_at',
         ),
         fields = (
-            'id',
+            'id', # default read-only
             'company',
             'contact_person',
             'email',
