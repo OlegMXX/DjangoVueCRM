@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -24,3 +26,16 @@ def get_my_team(request):
     serializer = TeamSerializer(team)
 
     return Response(serializer.data)
+
+@api_view(['POST'])
+def add_member(request):
+    team = Team.objects.filter(members__in=[request.user]).first()
+    email = request.data['email']
+
+    print('Email', email)
+
+    user = User.objects.get(username=email)
+    team.members.add(user)
+    team.save()
+
+    return Response()
