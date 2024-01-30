@@ -45,6 +45,7 @@
                         {{ note.body }}
                     </p>
 
+                    <router-link :to="{ name: 'EditNote', params: {id: client.id, note_id: note.id}}" class="button is-info is-small mt-6">Edit note</router-link>
                 </div>
             
             </div>
