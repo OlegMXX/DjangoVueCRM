@@ -2,8 +2,9 @@ from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import render
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -14,9 +15,16 @@ from .models import Client, Note
 from .serializers import ClientSerializer, NoteSerializer
 
 
+class ClientPagination(PageNumberPagination):
+    page_size = 10
+
+
 class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
+    pagination_class = ClientPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'contact_person')
 
     def perform_create(self, serializer):
         team = Team.objects.filter(members__in=[self.request.user]).first()
@@ -56,6 +64,12 @@ def convert_lead_to_client(request):
     except Lead.DoesNotExist:
         raise Http404
 
-    client = Client.objects.create(team=team, name=lead.company, contact_person=lead.contact_person, email=lead.email, phone=lead.phone, website=lead.website, created_by=request.user)
+    client = Client.objects.create(team=team,
+                                   name=lead.company,
+                                   contact_person=lead.contact_person,
+                                   email=lead.email,
+                                   phone=lead.phone,
+                                   website=lead.website,
+                                   created_by=request.user)
 
     return Response()
