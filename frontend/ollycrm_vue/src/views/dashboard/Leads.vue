@@ -5,7 +5,21 @@
                 <h1 class="title">Leads</h1>
 
                 <router-link to="/dashboard/leads/add">Add lead</router-link>
+                
+                <hr>
+
+                <form @submit.prevent="submitForm">
+                    <div class="field has-addons">
+                        <div class="control">
+                            <input type="text" class="input" v-model="query">
+                        </div>
+                        <div class="control">
+                            <button class="button is-success">Search</button>
+                        </div>
+                    </div>
+                </form>
             </div>
+
             <div class="column is-12">
                 <table class="table is-fullwidth">
                     <thead>
@@ -30,7 +44,16 @@
                                 <td>{{ lead.status }}</td>
                                 <td>
                                     <router-link :to="{ name: 'Lead', params: {id: lead.id}}">Details</router-link>
-                                </td>
+                                </td>                <form>
+                    <div class="field has-addons">
+                        <div class="control">
+                            <input type="text" class="input">
+                        </div>
+                        <div class="control">
+                            <button class="button is-light">Search</button>
+                        </div>
+                    </div>
+                </form>
                         </tr>
                     </tbody>
                 </table>
@@ -53,7 +76,8 @@
                 leads: [],
                 showNextButton: false,
                 showPreviousButton: false,
-                currentPage: 1
+                currentPage: 1,
+                query: ''
             }
         },
         mounted() {
@@ -76,7 +100,7 @@
                 this.showPreviousButton = false
 
                 await axios  
-                    .get(`/api/v1/leads/?page=${this.currentPage}`)
+                    .get(`/api/v1/leads/?page=${this.currentPage}&search=${this.query}`)
                     .then(response => {
                         this.leads = response.data.results
 
@@ -93,6 +117,9 @@
                     })
 
                 this.$store.commit('setIsLoading', false)
+            },
+            submitForm() {
+                this.getLeads()
             }
         }
     }
