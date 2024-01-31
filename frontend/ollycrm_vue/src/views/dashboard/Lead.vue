@@ -3,8 +3,11 @@
         <div class="columns is-multiline">
             <div class="column is-12">
                 <h1 class="title">{{ lead.company }}</h1>
-
-                <router-link :to="{ name: 'EditLead', params: {id: lead.id}}">Edit</router-link>
+                
+                <div class="buttons">
+                    <router-link :to="{ name: 'EditLead', params: {id: lead.id}}">Edit</router-link>
+                    <button @click="convertToClient" class="button ml-5 is-info">Convert to client</button>
+                </div>
             </div>
             <div class="column is-6">
                 <div class="box">
@@ -60,6 +63,27 @@
                     .get(`/api/v1/leads/${leadID}/`)
                     .then(response => {
                         this.lead = response.data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+
+                this.$store.commit('setIsLoading', false)
+            },
+            async convertToClient() {
+                this.$store.commit('setIsLoading', true)
+
+                const leadID = this.$route.params.id
+                const data = {
+                    lead_id: leadID
+                }
+
+                await axios
+                    .post(`/api/v1/convert_lead_to_client/`, data)
+                    .then(response => {
+                        console.log('converted to client')
+
+                        this.$router.push('/dashboard/clients')
                     })
                     .catch(error => {
                         console.log(error)
