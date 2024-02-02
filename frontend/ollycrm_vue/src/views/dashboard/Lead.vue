@@ -7,6 +7,7 @@
                 <div class="buttons">
                     <router-link :to="{ name: 'EditLead', params: {id: lead.id}}">Edit</router-link>
                     <button @click="convertToClient" class="button ml-5 is-info">Convert to client</button>
+                    <button @click="deleteLead" class="button is-danger">Delete</button>
                 </div>
             </div>
             <div class="column is-6">
@@ -42,6 +43,7 @@
 
 <script>
     import axios from 'axios';
+    import { toast } from 'bulma-toast'
 
     export default {
         name:'Lead',
@@ -54,6 +56,31 @@
             this.getLead()
         },
         methods: {
+            async deleteLead() {
+                this.$store.commit('setIsLoading', true)
+
+                const leadID = this.$route.params.id
+
+                await axios
+                    .post(`/api/v1/leads/delete_lead/${leadID}/`)
+                    .then(response => {
+                        toast({
+                        message: 'The lead was deleted!',
+                        type: 'is-danger',
+                        dismissible: true,
+                        pauseOnHover: true,
+                        duration: 4000,
+                        position: 'bottom-right',
+                        })
+
+                        this.$router.push('/dashboard/leads')
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+
+                this.$store.commit('setIsLoading', false)
+            },
             async getLead() {
                 this.$store.commit('setIsLoading', true)
 
