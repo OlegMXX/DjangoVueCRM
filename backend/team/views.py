@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Team
+from .models import Team, Plan
 from .serializers import TeamSerializer, UserSerializer
 
 
@@ -21,6 +21,7 @@ class TeamViewSet(viewsets.ModelViewSet):
         obj = serializer.save(created_by=self.request.user)
         obj.members.add(self.request.user)
         obj.save()
+
 
 class UserDetail(APIView):
     def get_object(self, pk):
@@ -49,6 +50,29 @@ def get_my_team(request):
     serializer = TeamSerializer(team)
 
     return Response(serializer.data)
+
+@api_view(['POST'])
+def upgrade_plan(request):
+    team = Team.objects.filter(members__in=[request.user]).first()
+    plan = request.data['plan']
+
+    print('Plan', plan)
+
+    if plan == 'free':
+        plan = Plan.objects.get(name='Free')
+    elif plan == 'smallteam':
+        plan = Plan.objects.get(name='Small team')
+    elif plan == 'bigteam':
+        plan = Plan.objects.get(name='Big team')
+
+    team.plan = plan
+    team.save()
+
+    serializer = TeamSerializer(team)
+
+    return Response(serializer.data)
+
+
 
 @api_view(['POST'])
 def add_member(request):
